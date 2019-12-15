@@ -146,15 +146,16 @@ if env['platform'] == 'linux':
 	env.Append(LIBS=File(sk_root_path + sk_build_path + 'skia/libsksg.a'))
 	env.Append(LIBS=File(sk_root_path + sk_build_path + 'skia/libskshaper.a'))
 	env.Append(LIBS=File(sk_root_path + sk_build_path + 'libGLIBJPEG_TURBO.a'))
-	env.Append(LIBS=File(sk_root_path + sk_build_path + 'libGLIBXML.a'))
-	env.Append(LIBS=File(sk_root_path + sk_build_path + 'libGRE2.a'))
 	env.Append(LIBS=File(sk_root_path + sk_build_path + 'libharfbuzz.a'))
 	env.Append(LIBS=File(sk_root_path + sk_build_path + 'libiccjpeg.a'))
-	env.Append(LIBS=File(sk_root_path + sk_build_path + 'libicu.a'))
-	env.Append(LIBS=File(sk_root_path + sk_build_path + 'liblibwebp.a'))
 	env.Append(LIBS=File(sk_root_path + sk_build_path + 'liblibyuv.a'))
 	env.Append(LIBS=File(sk_root_path + sk_build_path + 'libxdg_mime.a'))
 	env.Append(LIBS=File(sk_root_path + sk_build_path + 'libxdg_user_dirs.a'))
+	# UNUSED
+	#env.Append(LIBS=File(sk_root_path + sk_build_path + 'libGLIBXML.a'))
+	#env.Append(LIBS=File(sk_root_path + sk_build_path + 'libGRE2.a'))
+	#env.Append(LIBS=File(sk_root_path + sk_build_path + 'libicu.a'))
+	#env.Append(LIBS=File(sk_root_path + sk_build_path + 'liblibwebp.a'))
 
 # see https://github.com/godotengine/godot/blob/master/main/main_builders.py#L107
 if env['platform'] == 'javascript':
@@ -166,13 +167,14 @@ if env['platform'] == 'javascript':
 	env.Append(LIBS=File(sk_root_path + sk_build_path + 'skia/libsksg.a'))
 	env.Append(LIBS=File(sk_root_path + sk_build_path + 'skia/libskshaper.a'))
 	env.Append(LIBS=File(sk_root_path + sk_build_path + 'libGLIBJPEG_TURBO.a'))
-	env.Append(LIBS=File(sk_root_path + sk_build_path + 'libGLIBXML.a'))
-	env.Append(LIBS=File(sk_root_path + sk_build_path + 'libGRE2.a'))
 	env.Append(LIBS=File(sk_root_path + sk_build_path + 'libharfbuzz.a'))
 	env.Append(LIBS=File(sk_root_path + sk_build_path + 'libiccjpeg.a'))
-	env.Append(LIBS=File(sk_root_path + sk_build_path + 'libicu.a'))
-	env.Append(LIBS=File(sk_root_path + sk_build_path + 'liblibwebp.a'))
 	env.Append(LIBS=File(sk_root_path + sk_build_path + 'liblibyuv.a'))
+	# UNUSED
+	#env.Append(LIBS=File(sk_root_path + sk_build_path + 'libGLIBXML.a'))
+	#env.Append(LIBS=File(sk_root_path + sk_build_path + 'libGRE2.a'))
+	#env.Append(LIBS=File(sk_root_path + sk_build_path + 'libicu.a'))
+	#env.Append(LIBS=File(sk_root_path + sk_build_path + 'liblibwebp.a'))
 
 print('SKIA LIB: ' + sk_root_path + sk_build_path + 'skia/libskia.a')
 
