@@ -1,0 +1,15 @@
+ 
+if env['platform'] == 'javascript':
+https://github.com/godotengine/godot/blob/master/modules/freetype/SCsub#L78
+
+https://github.com/Xrayez/godot-anl/blob/master/examples/programmable_noise/random_noise.gd
+texture = ImageTexture.new()
+	texture.create_from_image(image, 0)
+	draw_texture(texture, Vector2())
+	
+https://github.com/poke1024/godot_vector_graphics/blob/b7842d28342317d136690f82a9ab75ee748265b4/vector_graphics_texture_renderer.cpp#L127
+
+https://github.com/underdoeg/godot-webcam/blob/master/src/webcam.cpp
+
+What is the proper way of capturing the mouse in a HTML5 game?
+https://godotengine.org/qa/25058/what-is-the-proper-way-of-capturing-the-mouse-in-a-html5-game

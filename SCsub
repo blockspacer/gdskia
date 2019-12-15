@@ -1,0 +1,210 @@
+# SCsub
+Import('env')
+
+print("Your platform:", env['platform'])
+print("Your target:", env['target'])
+print("Your bits:", env['bits'])
+print("Your CC:", env['CC'])
+print("Your CXX:", env['CXX'])
+
+module_env = env.Clone()
+
+module_env.add_source_files(env.modules_sources,"*.cpp")
+
+# module_env.Append(LIBPATH=['.']) 
+
+# module_env.Append(LIBPATH=['libs/x11']) 
+
+# TODO: rel or deb auto choose
+
+sk_root_path = "/mnt/data/skemgl/"
+
+module_env.Append(LIBPATH=[sk_root_path + 'build-linux-rel', sk_root_path + 'build-linux-rel/skia']) 
+
+module_env.Append(CPPPATH=[
+		sk_root_path + "src/chromium/third_party/",
+		sk_root_path + "src/chromium/third_party/skia", 
+		sk_root_path + "src/chromium/third_party/skia/src/", 
+		sk_root_path + "src/chromium/third_party/skia/src/modules", 
+		sk_root_path + "src/chromium/third_party/skia/src/modules/skottie", 
+		sk_root_path + "src/chromium/third_party/skia/src/modules/skottie/include", 
+		sk_root_path + "src/chromium/third_party/skia/src/modules/sksg/include", 
+		sk_root_path + "src/chromium/third_party/skia/src/modules/skshaper/include", 
+		sk_root_path + "src/chromium/third_party/skia/src/modules/pathkit", 
+		sk_root_path + "src/chromium/third_party/skia/src/modules/src/gpu", 
+		sk_root_path + "src/chromium/third_party/skia/src/modules/src/sksl", 
+		sk_root_path + "src/chromium/third_party/skia/src/modules/src/gpu/gl", 
+		sk_root_path + "src/chromium/third_party/skia/src/modules/src/shaders", 
+		sk_root_path + "src/chromium/third_party/skia/src/modules/src/core", 
+		sk_root_path + "src/chromium/third_party/skia/src/modules/src/image", 
+		sk_root_path + "src/chromium/third_party/skia/src/modules/src/utils", 
+		sk_root_path + "src/chromium/third_party/skia/src/modules/src/utils", 
+		sk_root_path + "src/chromium/third_party/skia/src/include/", 
+		sk_root_path + "src/chromium/third_party/skia/src/include/c", 
+		sk_root_path + "src/chromium/third_party/skia/src/include/codec", 
+		sk_root_path + "src/chromium/third_party/skia/src/include/config", 
+		sk_root_path + "src/chromium/third_party/skia/src/include/core", 
+		sk_root_path + "src/chromium/third_party/skia/src/include/effects", 
+		sk_root_path + "src/chromium/third_party/skia/src/include/gpu", 
+		sk_root_path + "src/chromium/third_party/skia/src/include/gpu/gl", 
+		sk_root_path + "src/chromium/third_party/skia/src/include/pathops", 
+		sk_root_path + "src/chromium/third_party/skia/src/include/ports", 
+		sk_root_path + "src/chromium/third_party/skia/src/include/svg", 
+		sk_root_path + "src/chromium/third_party/skia/src/include/utils", 
+		sk_root_path + "src/chromium/third_party/skia/src/include/private", 
+		sk_root_path + "src/chromium/third_party/skia/src/third_party/freetype2", 
+		sk_root_path + "src/chromium/third_party/skia/src/third_party/libpng", 
+		sk_root_path + "src/chromium/third_party/skia/src/third_party/Nima-Cpp", 
+		sk_root_path + "src/chromium/third_party/skia/src/third_party/skcms", 
+		sk_root_path + "src/chromium/third_party/skia/src/third_party/zlib"
+	])
+
+# module_env.Append(LIBS=['GLIBJPEG_TURBO', 'GLIBXML', 'GRE2', 'iccjpeg', 'icu', 'webp', 'yuv', 'xdg_mime', 'xdg_user_dirs', 'particles', 'pathkit', 'skia', 'skottie', 'sksg', 'skshaper'])
+
+# module_env.Append(LINKFLAGS=[p + ".a"] for p in ['GLIBJPEG_TURBO', 'GLIBXML', 'GRE2', 'iccjpeg', 'icu', 'webp', 'yuv', 'xdg_mime', 'xdg_user_dirs', 'particles', 'pathkit', 'skia', 'skottie', 'sksg', 'skshaper', lib_name]])
+
+# module_env.Append(LINKFLAGS=[sk_root_path + "build-linux-rel/skia/libskia.a"])
+
+# export LIBRARY_PATH=$LIBRARY_PATH:/home/denis/workspace/skia-opengl-emscripten/build-linux-rel/
+
+# CCFLAGS CXXFLAGS
+module_env.Append(CCFLAGS=[
+#	'-L/home/denis/workspace/skia-opengl-emscripten/build-linux-rel/', 
+#	'-lskia', 
+#	'-lSKIA', 
+#	'-lsksg',
+  '-DUSE_X11=1',
+	'-std=c++17',
+	'-DSK_SUPPORT_GPU=1',
+	'-DSK_DISABLE_READBUFFER=1',
+	'-DLIBEGL_IMPLEMENTATION=1',
+	'-DEGL_EGLEXT_PROTOTYPES=1',
+	'-DSK_ENABLE_SKOTTIE=1',
+	'-DSK_USING_SKSHAPER=1',
+	'-DSK_SAMPLES_FOR_X=1',
+	'-DSK_HAS_PNG_LIBRARY=1',
+	'-DSK_INCLUDE_MANAGED_SKOTTIE=1',
+	'-DSK_HAS_JPEG_LIBRARY=1'
+#'-I' + os.path.join(dir_path, 'tove2d/src/thirdparty/fp16/include')
+])
+
+if (env["target"] == "release" or env["target"] == "release_debug"):
+	env.Prepend(CCFLAGS=[
+		'-DNDEBUG=1',
+		'-fno-rtti', 
+		'-fno-exceptions', 
+		'-DSK_RELEASE=1'
+	])
+	if env['platform'] == 'linux':
+		sk_build_path = "build-linux-rel/"
+	if env['platform'] == 'javascript':
+		sk_build_path = "build-wasm-st-rel/"
+elif (env["target"] == "debug"):
+	env.Prepend(CCFLAGS=[
+		'-frtti', 
+		'-fexceptions', 
+		'-DSK_RELEASE=1', 
+		'-DSK_DEBUG=1'
+	])
+	if env['platform'] == 'linux':
+		sk_build_path = "build-linux-deb/"
+	if env['platform'] == 'javascript':
+		sk_build_path = "build-wasm-st-deb/"
+
+print("Your sk_build_path:", sk_build_path)
+
+# see https://github.com/godotengine/godot/blob/master/main/main_builders.py#L107
+if env['platform'] == 'javascript':
+	module_env.Append(CCFLAGS=[
+		'-DOS_EMSCRIPTEN=1',
+		'-DSK_CPU_SSE_LEVEL=0',
+		'-DSKNX_NO_SIMD=1',
+		'-DSK_ASSUME_WEBGL=1',
+		'-DIS_WEBGL=1',
+		'-DSK_ASSUME_WEBGL=1',
+		'-DSK_DISABLE_AAA=1',
+		'-DSK_DISABLE_EFFECT_DESERIALIZATION=1',
+		'-DWEB_ASSEMBLY=1',
+		'-DSK_SUPPORT_OPENCL=0',
+		'-DSK_SUPPORT_OPENCL=0'
+	])
+
+# see https://github.com/godotengine/godot/blob/master/main/main_builders.py#L107
+if env['platform'] == 'linux':
+	module_env.Append(CCFLAGS=[
+	'-DSK_ASSUME_GL=1',
+	'-DSK_ENABLE_DUMP_GPU=1'
+	])
+
+# see https://github.com/godotengine/godot/blob/master/main/main_builders.py#L107
+if env['platform'] == 'linux':
+	print("Enabling skia for linux platform")
+	env.Append(LIBS=File(sk_root_path + sk_build_path + 'skia/libskia.a'))
+	env.Append(LIBS=File(sk_root_path + sk_build_path + 'skia/libparticles.a'))
+	env.Append(LIBS=File(sk_root_path + sk_build_path + 'skia/libpathkit.a'))
+	env.Append(LIBS=File(sk_root_path + sk_build_path + 'skia/libskottie.a'))
+	env.Append(LIBS=File(sk_root_path + sk_build_path + 'skia/libsksg.a'))
+	env.Append(LIBS=File(sk_root_path + sk_build_path + 'skia/libskshaper.a'))
+	env.Append(LIBS=File(sk_root_path + sk_build_path + 'libGLIBJPEG_TURBO.a'))
+	env.Append(LIBS=File(sk_root_path + sk_build_path + 'libGLIBXML.a'))
+	env.Append(LIBS=File(sk_root_path + sk_build_path + 'libGRE2.a'))
+	env.Append(LIBS=File(sk_root_path + sk_build_path + 'libharfbuzz.a'))
+	env.Append(LIBS=File(sk_root_path + sk_build_path + 'libiccjpeg.a'))
+	env.Append(LIBS=File(sk_root_path + sk_build_path + 'libicu.a'))
+	env.Append(LIBS=File(sk_root_path + sk_build_path + 'liblibwebp.a'))
+	env.Append(LIBS=File(sk_root_path + sk_build_path + 'liblibyuv.a'))
+	env.Append(LIBS=File(sk_root_path + sk_build_path + 'libxdg_mime.a'))
+	env.Append(LIBS=File(sk_root_path + sk_build_path + 'libxdg_user_dirs.a'))
+
+# see https://github.com/godotengine/godot/blob/master/main/main_builders.py#L107
+if env['platform'] == 'javascript':
+	print("Enabling skia for javascript platform")
+	env.Append(LIBS=File(sk_root_path + sk_build_path + 'skia/libskia.a'))
+	env.Append(LIBS=File(sk_root_path + sk_build_path + 'skia/libparticles.a'))
+	env.Append(LIBS=File(sk_root_path + sk_build_path + 'skia/libpathkit.a'))
+	env.Append(LIBS=File(sk_root_path + sk_build_path + 'skia/libskottie.a'))
+	env.Append(LIBS=File(sk_root_path + sk_build_path + 'skia/libsksg.a'))
+	env.Append(LIBS=File(sk_root_path + sk_build_path + 'skia/libskshaper.a'))
+	env.Append(LIBS=File(sk_root_path + sk_build_path + 'libGLIBJPEG_TURBO.a'))
+	env.Append(LIBS=File(sk_root_path + sk_build_path + 'libGLIBXML.a'))
+	env.Append(LIBS=File(sk_root_path + sk_build_path + 'libGRE2.a'))
+	env.Append(LIBS=File(sk_root_path + sk_build_path + 'libharfbuzz.a'))
+	env.Append(LIBS=File(sk_root_path + sk_build_path + 'libiccjpeg.a'))
+	env.Append(LIBS=File(sk_root_path + sk_build_path + 'libicu.a'))
+	env.Append(LIBS=File(sk_root_path + sk_build_path + 'liblibwebp.a'))
+	env.Append(LIBS=File(sk_root_path + sk_build_path + 'liblibyuv.a'))
+
+print('SKIA LIB: ' + sk_root_path + sk_build_path + 'skia/libskia.a')
+
+# see https://github.com/godotengine/godot/blob/master/main/main_builders.py#L107
+#if env['platform'] == 'javascript':
+#	module_env.add_source_files([
+#    "src/chromium/third_party/skia/src/utils/Sk3D.cpp",
+#    "src/chromium/third_party/skia/src/utils/SkBase64.cpp",
+#    "src/chromium/third_party/skia/src/utils/SkFrontBufferedStream.cpp",
+#    "src/chromium/third_party/skia/src/utils/SkCamera.cpp",
+#    "src/chromium/third_party/skia/src/utils/SkCanvasStack.cpp",
+#    "src/chromium/third_party/skia/src/utils/SkCanvasStateUtils.cpp",
+#    "src/chromium/third_party/skia/src/utils/SkDashPath.cpp",
+#    "src/chromium/third_party/skia/src/utils/SkEventTracer.cpp",
+#    "src/chromium/third_party/skia/src/utils/SkFloatToDecimal.cpp",
+#    "src/chromium/third_party/skia/src/utils/SkInterpolator.cpp",
+#    "src/chromium/third_party/skia/src/utils/SkJSON.cpp",
+#    "src/chromium/third_party/skia/src/utils/SkJSONWriter.cpp",
+#    "src/chromium/third_party/skia/src/utils/SkMatrix22.cpp",
+#    "src/chromium/third_party/skia/src/utils/SkMultiPictureDocument.cpp",
+#    "src/chromium/third_party/skia/src/utils/SkNWayCanvas.cpp",
+#    "src/chromium/third_party/skia/src/utils/SkNullCanvas.cpp",
+#    "src/chromium/third_party/skia/src/utils/SkOSPath.cpp",
+#    "src/chromium/third_party/skia/src/utils/SkPaintFilterCanvas.cpp",
+#    "src/chromium/third_party/skia/src/utils/SkParse.cpp",
+#    "src/chromium/third_party/skia/src/utils/SkParseColor.cpp",
+#    "src/chromium/third_party/skia/src/utils/SkParsePath.cpp",
+#    "src/chromium/third_party/skia/src/utils/SkPatchUtils.cpp",
+#    "src/chromium/third_party/skia/src/utils/SkPolyUtils.cpp",
+#    "src/chromium/third_party/skia/src/utils/SkShadowTessellator.cpp",
+#    "src/chromium/third_party/skia/src/utils/SkShadowUtils.cpp",
+#    "src/chromium/third_party/skia/src/utils/SkThreadUtils_pthread.cpp",
+#    "src/chromium/third_party/skia/src/utils/SkThreadUtils_win.cpp",
+#    "src/chromium/third_party/skia/src/utils/SkWhitelistTypefaces.cpp"
+#	])

@@ -1,0 +1,5 @@
+*.obj
+*.pyc
+*.o
+*.bc
+*.opt.bc
