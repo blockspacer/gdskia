@@ -1,11 +1,87 @@
 # SCsub
 Import('env')
 
+# TODO: rel or deb auto choose
+
+sk_root_path = "/mnt/data/skemgl/"
+
 print("Your platform:", env['platform'])
 print("Your target:", env['target'])
 print("Your bits:", env['bits'])
 print("Your CC:", env['CC'])
 print("Your CXX:", env['CXX'])
+
+if (env["target"] == "release" or env["target"] == "release_debug"):
+	env.Prepend(CCFLAGS=[
+		'-DNDEBUG=1',
+		'-fno-rtti', 
+		'-fno-exceptions', 
+		'-DSK_RELEASE=1'
+	])
+	if env['platform'] == 'linux':
+		sk_build_path = "build-linux-rel/"
+	if env['platform'] == 'javascript':
+		sk_build_path = "build-wasm-st-rel/"
+elif (env["target"] == "debug"):
+	env.Prepend(CCFLAGS=[
+		'-frtti', 
+		'-fexceptions', 
+		'-DSK_RELEASE=1', 
+		'-DSK_DEBUG=1'
+	])
+	if env['platform'] == 'linux':
+		sk_build_path = "build-linux-deb/"
+	if env['platform'] == 'javascript':
+		sk_build_path = "build-wasm-st-deb/"
+
+print("Your sk_build_path:", sk_build_path)
+
+print('SKIA LIB: ' + sk_root_path + sk_build_path + 'skia/libskia.a')
+
+# see https://github.com/godotengine/godot/blob/master/main/main_builders.py#L107
+if env['platform'] == 'javascript':
+	env.Append(LINKFLAGS=['-s', 'USE_FREETYPE=1'])
+	env.Append(LINKFLAGS=['-s', 'FULL_ES3=1'])
+
+# see https://github.com/godotengine/godot/blob/master/main/main_builders.py#L107
+if env['platform'] == 'linux':
+	print("Enabling skia for linux platform")
+	env.Append(LIBS=File(sk_root_path + sk_build_path + 'skia/libskia.a'))
+	env.Append(LIBS=File(sk_root_path + sk_build_path + 'skia/libparticles.a'))
+	env.Append(LIBS=File(sk_root_path + sk_build_path + 'skia/libpathkit.a'))
+	env.Append(LIBS=File(sk_root_path + sk_build_path + 'skia/libskottie.a'))
+	env.Append(LIBS=File(sk_root_path + sk_build_path + 'skia/libsksg.a'))
+	env.Append(LIBS=File(sk_root_path + sk_build_path + 'skia/libskshaper.a'))
+	env.Append(LIBS=File(sk_root_path + sk_build_path + 'libGLIBJPEG_TURBO.a'))
+	env.Append(LIBS=File(sk_root_path + sk_build_path + 'libharfbuzz.a'))
+	env.Append(LIBS=File(sk_root_path + sk_build_path + 'libiccjpeg.a'))
+	env.Append(LIBS=File(sk_root_path + sk_build_path + 'liblibyuv.a'))
+	env.Append(LIBS=File(sk_root_path + sk_build_path + 'libxdg_mime.a'))
+	env.Append(LIBS=File(sk_root_path + sk_build_path + 'libxdg_user_dirs.a'))
+	# UNUSED
+	#env.Append(LIBS=File(sk_root_path + sk_build_path + 'libGLIBXML.a'))
+	#env.Append(LIBS=File(sk_root_path + sk_build_path + 'libGRE2.a'))
+	#env.Append(LIBS=File(sk_root_path + sk_build_path + 'libicu.a'))
+	#env.Append(LIBS=File(sk_root_path + sk_build_path + 'liblibwebp.a'))
+
+# see https://github.com/godotengine/godot/blob/master/main/main_builders.py#L107
+if env['platform'] == 'javascript':
+	print("Enabling skia for javascript platform")
+	env.Append(LIBS=File(sk_root_path + sk_build_path + 'skia/libskia.a'))
+	env.Append(LIBS=File(sk_root_path + sk_build_path + 'skia/libparticles.a'))
+	env.Append(LIBS=File(sk_root_path + sk_build_path + 'skia/libpathkit.a'))
+	env.Append(LIBS=File(sk_root_path + sk_build_path + 'skia/libskottie.a'))
+	env.Append(LIBS=File(sk_root_path + sk_build_path + 'skia/libsksg.a'))
+	env.Append(LIBS=File(sk_root_path + sk_build_path + 'skia/libskshaper.a'))
+	env.Append(LIBS=File(sk_root_path + sk_build_path + 'libGLIBJPEG_TURBO.a'))
+	env.Append(LIBS=File(sk_root_path + sk_build_path + 'libharfbuzz.a'))
+	env.Append(LIBS=File(sk_root_path + sk_build_path + 'libiccjpeg.a'))
+	env.Append(LIBS=File(sk_root_path + sk_build_path + 'liblibyuv.a'))
+	# UNUSED
+	#env.Append(LIBS=File(sk_root_path + sk_build_path + 'libGLIBXML.a'))
+	#env.Append(LIBS=File(sk_root_path + sk_build_path + 'libGRE2.a'))
+	#env.Append(LIBS=File(sk_root_path + sk_build_path + 'libicu.a'))
+	#env.Append(LIBS=File(sk_root_path + sk_build_path + 'liblibwebp.a'))
 
 module_env = env.Clone()
 
@@ -14,10 +90,6 @@ module_env.add_source_files(env.modules_sources,"*.cpp")
 # module_env.Append(LIBPATH=['.']) 
 
 # module_env.Append(LIBPATH=['libs/x11']) 
-
-# TODO: rel or deb auto choose
-
-sk_root_path = "/mnt/data/skemgl/"
 
 module_env.Append(LIBPATH=[sk_root_path + 'build-linux-rel', sk_root_path + 'build-linux-rel/skia']) 
 
@@ -88,31 +160,6 @@ module_env.Append(CCFLAGS=[
 #'-I' + os.path.join(dir_path, 'tove2d/src/thirdparty/fp16/include')
 ])
 
-if (env["target"] == "release" or env["target"] == "release_debug"):
-	env.Prepend(CCFLAGS=[
-		'-DNDEBUG=1',
-		'-fno-rtti', 
-		'-fno-exceptions', 
-		'-DSK_RELEASE=1'
-	])
-	if env['platform'] == 'linux':
-		sk_build_path = "build-linux-rel/"
-	if env['platform'] == 'javascript':
-		sk_build_path = "build-wasm-st-rel/"
-elif (env["target"] == "debug"):
-	env.Prepend(CCFLAGS=[
-		'-frtti', 
-		'-fexceptions', 
-		'-DSK_RELEASE=1', 
-		'-DSK_DEBUG=1'
-	])
-	if env['platform'] == 'linux':
-		sk_build_path = "build-linux-deb/"
-	if env['platform'] == 'javascript':
-		sk_build_path = "build-wasm-st-deb/"
-
-print("Your sk_build_path:", sk_build_path)
-
 # see https://github.com/godotengine/godot/blob/master/main/main_builders.py#L107
 if env['platform'] == 'javascript':
 	module_env.Append(CCFLAGS=[
@@ -135,48 +182,6 @@ if env['platform'] == 'linux':
 	'-DSK_ASSUME_GL=1',
 	'-DSK_ENABLE_DUMP_GPU=1'
 	])
-
-# see https://github.com/godotengine/godot/blob/master/main/main_builders.py#L107
-if env['platform'] == 'linux':
-	print("Enabling skia for linux platform")
-	env.Append(LIBS=File(sk_root_path + sk_build_path + 'skia/libskia.a'))
-	env.Append(LIBS=File(sk_root_path + sk_build_path + 'skia/libparticles.a'))
-	env.Append(LIBS=File(sk_root_path + sk_build_path + 'skia/libpathkit.a'))
-	env.Append(LIBS=File(sk_root_path + sk_build_path + 'skia/libskottie.a'))
-	env.Append(LIBS=File(sk_root_path + sk_build_path + 'skia/libsksg.a'))
-	env.Append(LIBS=File(sk_root_path + sk_build_path + 'skia/libskshaper.a'))
-	env.Append(LIBS=File(sk_root_path + sk_build_path + 'libGLIBJPEG_TURBO.a'))
-	env.Append(LIBS=File(sk_root_path + sk_build_path + 'libharfbuzz.a'))
-	env.Append(LIBS=File(sk_root_path + sk_build_path + 'libiccjpeg.a'))
-	env.Append(LIBS=File(sk_root_path + sk_build_path + 'liblibyuv.a'))
-	env.Append(LIBS=File(sk_root_path + sk_build_path + 'libxdg_mime.a'))
-	env.Append(LIBS=File(sk_root_path + sk_build_path + 'libxdg_user_dirs.a'))
-	# UNUSED
-	#env.Append(LIBS=File(sk_root_path + sk_build_path + 'libGLIBXML.a'))
-	#env.Append(LIBS=File(sk_root_path + sk_build_path + 'libGRE2.a'))
-	#env.Append(LIBS=File(sk_root_path + sk_build_path + 'libicu.a'))
-	#env.Append(LIBS=File(sk_root_path + sk_build_path + 'liblibwebp.a'))
-
-# see https://github.com/godotengine/godot/blob/master/main/main_builders.py#L107
-if env['platform'] == 'javascript':
-	print("Enabling skia for javascript platform")
-	env.Append(LIBS=File(sk_root_path + sk_build_path + 'skia/libskia.a'))
-	env.Append(LIBS=File(sk_root_path + sk_build_path + 'skia/libparticles.a'))
-	env.Append(LIBS=File(sk_root_path + sk_build_path + 'skia/libpathkit.a'))
-	env.Append(LIBS=File(sk_root_path + sk_build_path + 'skia/libskottie.a'))
-	env.Append(LIBS=File(sk_root_path + sk_build_path + 'skia/libsksg.a'))
-	env.Append(LIBS=File(sk_root_path + sk_build_path + 'skia/libskshaper.a'))
-	env.Append(LIBS=File(sk_root_path + sk_build_path + 'libGLIBJPEG_TURBO.a'))
-	env.Append(LIBS=File(sk_root_path + sk_build_path + 'libharfbuzz.a'))
-	env.Append(LIBS=File(sk_root_path + sk_build_path + 'libiccjpeg.a'))
-	env.Append(LIBS=File(sk_root_path + sk_build_path + 'liblibyuv.a'))
-	# UNUSED
-	#env.Append(LIBS=File(sk_root_path + sk_build_path + 'libGLIBXML.a'))
-	#env.Append(LIBS=File(sk_root_path + sk_build_path + 'libGRE2.a'))
-	#env.Append(LIBS=File(sk_root_path + sk_build_path + 'libicu.a'))
-	#env.Append(LIBS=File(sk_root_path + sk_build_path + 'liblibwebp.a'))
-
-print('SKIA LIB: ' + sk_root_path + sk_build_path + 'skia/libskia.a')
 
 # see https://github.com/godotengine/godot/blob/master/main/main_builders.py#L107
 #if env['platform'] == 'javascript':
